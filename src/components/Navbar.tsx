@@ -1,19 +1,23 @@
 "use client";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { AlignRight } from "lucide-react";
-import Link from "next/link";
 
 export default function Navbar() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full flex justify-between items-center p-4 bg-background/50 backdrop-blur-sm">
-      <div className="text-2xl font-bold">TANAKA</div>
+      <div className="text-2xl font-bold">
+        <a href="#hero">TANAKA</a>
+      </div>
       <nav className="">
         <ul className="gap-4 hidden md:flex">
           <li>
-            <Link href="/">Home</Link>
+            <a href="#hero">TOP</a>
           </li>
           <li>
-            <Link href="/about">About</Link>
+            <a href="#marquee">About</a>
+          </li>
+          <li>
+            <a href="#contact">Contact</a>
           </li>
         </ul>
         <Sheet>
@@ -26,10 +30,13 @@ export default function Navbar() {
             </SheetHeader>
             <ul>
               <li>
-                <Link href="/">Home</Link>
+                <a href="#hero">Home</a>
               </li>
               <li>
-                <Link href="/about">About</Link>
+                <a href="#marquee">Marquee</a>
+              </li>
+              <li>
+                <a href="#contact">Contact</a>
               </li>
             </ul>
           </SheetContent>

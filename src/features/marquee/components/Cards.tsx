@@ -14,7 +14,7 @@ import Image from "next/image";
 
 export function BentoGridDemo() {
   return (
-    <BentoGrid className="max-w-3xl mx-auto relative mt-40">
+    <BentoGrid className="max-w-3xl mx-auto relative mt-40 w-11/12 justify-items-center md:justify-items-normal">
       {items.map((item, i) => (
         <BentoGridItem
           key={i}
@@ -22,7 +22,7 @@ export function BentoGridDemo() {
           description={item.description}
           header={item.header}
           icon={item.icon}
-          className={i === 3 || i === 6 ? "md:col-span-2" : ""}
+          className={cn(i === 3 || i === 6 ? "md:col-span-2" : "", "max-w-sm", "md:max-w-none")}
         />
       ))}
     </BentoGrid>
@@ -30,7 +30,13 @@ export function BentoGridDemo() {
 }
 const Skeleton = ({ id }: { id: number }) => (
   <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-neutral-200 dark:from-neutral-900 dark:to-neutral-800 to-neutral-100">
-    <Image src={`https://picsum.photos/id/${id}/400/600`} alt="" width={400} height={600} className="w-full h-full object-cover" />
+    <Image
+      src={`https://picsum.photos/id/${id}/400/600`}
+      alt=""
+      width={400}
+      height={600}
+      className="w-full h-full object-cover aspect-square md:aspect-auto"
+    />
   </div>
 );
 const items = [

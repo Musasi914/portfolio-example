@@ -19,7 +19,9 @@ export default function Loader() {
 
     return () => {
       clearInterval(interval);
-      document.body.style.overflow = "auto";
+      setTimeout(() => {
+        document.body.style.overflow = "auto";
+      }, 2000);
     };
   }, []);
 

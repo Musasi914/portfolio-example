@@ -203,3 +203,8 @@
     @apply max-w-screen-lg w-11/12 mx-auto;
   }
 }
+
+html {
+  scrollbar-gutter: stable;
+  scroll-behavior: smooth;
+}

@@ -5,12 +5,14 @@ import { cn } from "@/lib/utils";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useRef } from "react";
+import { useContext, useRef } from "react";
+import { LoadingContext } from "../provider/LoadingProvider";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Backgrounds({ className }: { className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { isLoading } = useContext(LoadingContext);
 
   useGSAP(() => {
     const tl = gsap
@@ -30,11 +32,43 @@ export default function Backgrounds({ className }: { className?: string }) {
       scrub: 1,
       animation: tl,
     });
-  }, [containerRef]);
+
+    if (!isLoading) {
+      gsap.from(".bg__mountain-3", {
+        yPercent: 10,
+        duration: 2,
+        delay: 0.0,
+        ease: "power2.out",
+      });
+
+      gsap.from(".bg__mountain-2", {
+        yPercent: 100,
+        duration: 1.5,
+        delay: 0.5,
+        ease: "power2.out",
+      });
+      gsap.from(".bg__mountain-1", {
+        yPercent: 100,
+        duration: 1,
+        delay: 1,
+        ease: "power2.out",
+      });
+
+      gsap.from(".bg__planets", {
+        yPercent: 5,
+        duration: 2,
+        delay: 0.0,
+        ease: "power2.inOut",
+      });
+    }
+  }, [containerRef, isLoading]);
   return (
     <div
       ref={containerRef}
-      className={cn("absolute top-0 left-0 w-full h-full [&>img]:absolute [&>img]:object-cover [&>img]:object-center", className)}
+      className={cn(
+        "background absolute top-0 left-0 w-full h-full [&>img]:absolute [&>img]:object-cover [&>img]:object-center",
+        className
+      )}
     >
       <Image src="/hero/sky.webp" alt="" width={1820} height={1020} className="bg__sky w-full h-full" />
       <Image src="/hero/mountain-3.webp" alt="" width={1820} height={1020} className="bg__mountain-3 bottom-0" priority />

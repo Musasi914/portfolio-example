@@ -10,8 +10,8 @@ export default function Contact() {
   const [result, dispatch, pending] = useActionState(postAction, initialState);
 
   return (
-    <section className="w-full min-h-screen relative pt-10 mt-20 grid place-items-center">
-      <div className="max-w-md mx-auto bg-background rounded-lg shadow-accent shadow-2xl w-full">
+    <section className="w-full min-h-screen relative pt-10 mt-20 grid place-items-center" id="contact">
+      <div className="max-w-md w-11/12 mx-auto bg-background rounded-lg shadow-accent shadow-2xl">
         <CardSpotlight className="p-6">
           <div className="relative z-10">
             <h2 className="text-2xl font-bold mb-6 text-center">お問い合わせ</h2>
@@ -69,7 +69,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={pending || result.message}
-                className="w-full bg-accent text-accent-foreground py-3 px-6 rounded hover:bg-accent/80 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-accent text-accent-foreground py-3 px-6 rounded hover:bg-accent/80 disabled:opacity-50 disabled:cursor-not-allowed font-black"
               >
                 {pending ? "送信中..." : result.message ? "ありがとうございました" : "送信"}
               </button>

@@ -1,40 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Timer } from "three/addons/misc/Timer.js";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Loader from "../../../components/ui/loader";
+import { LoadingContext } from "../provider/LoadingProvider";
+import Loader from "@/components/ui/loader";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Model() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isBigScreen, setIsBigScreen] = useState(false);
+  const { isLoading, setIsLoading } = useContext(LoadingContext);
 
   let model: THREE.Group;
 
-  // クライアントサイドでのみメディアクエリを実行
-  useEffect(() => {
-    const checkMediaQueries = () => {
-      setIsMobile(window.innerWidth <= 768);
-      setIsBigScreen(window.innerWidth >= 1280);
-    };
-
-    checkMediaQueries();
-    window.addEventListener("resize", checkMediaQueries);
-
-    return () => {
-      window.removeEventListener("resize", checkMediaQueries);
-    };
-  }, [isMobile, isBigScreen]);
-
   // three.js
   useEffect(() => {
-    // メディアクエリの状態が確定するまで待つ
     if (typeof window === "undefined") return;
+
+    let isMobile = window.innerWidth <= 768;
+    let isBigScreen = window.innerWidth >= 1280;
 
     const SIZES = {
       width: window.innerWidth,
@@ -117,10 +103,10 @@ export default function Model() {
       mixer?.update(deltaTime);
       renderer.render(scene, camera);
 
-      const targetPositionX = mouse.x * 0.1;
-      const targetPositionY = mouse.y * 0.1;
-      camera.position.x += (targetPositionX - camera.position.x) * 0.01;
-      camera.position.y += (targetPositionY - camera.position.y) * 0.01;
+      const targetPositionX = -mouse.x * 0.1;
+      const targetPositionY = -mouse.y * 0.1;
+      camera.position.x += (targetPositionX - camera.position.x) * 0.02;
+      camera.position.y += (targetPositionY - camera.position.y) * 0.02;
       if (model) {
         camera.lookAt(0, 0, -1);
       }
