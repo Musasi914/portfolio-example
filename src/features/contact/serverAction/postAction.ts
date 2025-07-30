@@ -2,18 +2,26 @@
 
 import { Resend } from "resend";
 import { z } from "zod";
+import { EMAIL_CONFIG } from "@/constants";
+import { ContactFormData, ContactFormState } from "@/types";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const schema = z.object({
+// バリデーションスキーマ
+const contactSchema = z.object({
   email: z.string().email("有効なメールアドレスを入力してください"),
   title: z.string().min(1, "タイトルは必須です"),
   message: z.string().min(1, "メッセージは必須です"),
 });
 
-export async function postAction(prev: any, formData: FormData) {
+/**
+ * お問い合わせフォームのサーバーアクション
+ * フォームデータをバリデーションし、メールを送信
+ */
+export async function postAction(prev: any, formData: FormData): Promise<ContactFormState> {
   try {
-    const validatedFields = schema.safeParse({
+    // フォームデータのバリデーション
+    const validatedFields = contactSchema.safeParse({
       email: formData.get("email"),
       title: formData.get("title"),
       message: formData.get("message"),
@@ -41,17 +49,11 @@ export async function postAction(prev: any, formData: FormData) {
 
     // メール送信
     const result = await resend.emails.send({
-      from: "onboarding@resend.dev", // Resendのデフォルト送信者
-      to: "sopmod120@gmail.com",
-      replyTo: email, // 返信先を送信者のメールアドレスに設定
-      subject: `ポートフォリオからのお問い合わせ: ${title}`,
-      html: `
-        <h2>新しいお問い合わせ</h2>
-        <p><strong>送信者:</strong> ${email}</p>
-        <p><strong>タイトル:</strong> ${title}</p>
-        <p><strong>メッセージ:</strong></p>
-        <div style="white-space: pre-wrap;">${message}</div>
-      `,
+      from: EMAIL_CONFIG.from,
+      to: EMAIL_CONFIG.to,
+      replyTo: email,
+      subject: `${EMAIL_CONFIG.subjectPrefix}${title}`,
+      html: generateEmailTemplate({ email, title, message }),
     });
 
     console.log("メール送信結果:", result);
@@ -75,4 +77,17 @@ export async function postAction(prev: any, formData: FormData) {
       message: null,
     };
   }
+}
+
+/**
+ * メールテンプレートを生成
+ */
+function generateEmailTemplate({ email, title, message }: ContactFormData): string {
+  return `
+    <h2>新しいお問い合わせ</h2>
+    <p><strong>送信者:</strong> ${email}</p>
+    <p><strong>タイトル:</strong> ${title}</p>
+    <p><strong>メッセージ:</strong></p>
+    <div style="white-space: pre-wrap;">${message}</div>
+  `;
 }

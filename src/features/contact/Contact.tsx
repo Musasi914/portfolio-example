@@ -4,9 +4,12 @@ import { useActionState } from "react";
 import { postAction } from "./serverAction/postAction";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
 
+/**
+ * お問い合わせフォームコンポーネント
+ * ユーザーからのお問い合わせを受け付けるフォーム
+ */
 export default function Contact() {
   const initialState: any = { error: null, message: null };
-
   const [result, dispatch, pending] = useActionState(postAction, initialState);
 
   return (
@@ -68,7 +71,7 @@ export default function Contact() {
 
               <button
                 type="submit"
-                disabled={pending || result.message}
+                disabled={pending || !!result.message}
                 className="w-full bg-accent text-accent-foreground py-3 px-6 rounded hover:bg-accent/80 disabled:opacity-50 disabled:cursor-not-allowed font-black"
               >
                 {pending ? "送信中..." : result.message ? "ありがとうございました" : "送信"}

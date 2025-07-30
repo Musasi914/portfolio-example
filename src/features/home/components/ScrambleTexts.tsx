@@ -2,58 +2,87 @@
 
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { useRef } from "react";
+import { useRef, useCallback, useMemo } from "react";
 import SplitText from "gsap/SplitText";
 import ScrambleTextPlugin from "gsap/ScrambleTextPlugin";
 import { cn } from "@/lib/utils";
+import { getRandomPosition } from "@/lib/utils";
+
 gsap.registerPlugin(SplitText, ScrambleTextPlugin);
 
-export default function ScrambleTexts({ quotes, className }: { quotes: string[]; className?: string }) {
+interface ScrambleTextsProps {
+  quotes: string[];
+  className?: string;
+}
+
+/**
+ * スクランブルテキストコンポーネント
+ * ランダムな位置でテキストがスクランブル表示されるアニメーション
+ */
+export default function ScrambleTexts({ quotes, className }: ScrambleTextsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  useGSAP(() => {
-    const quotes = gsap.utils.toArray<HTMLElement>(".quote");
-    const scrambleChars = "upperAndLowerCase";
 
-    const getRandomPosition = () => {
-      const x = Math.random() * (window.innerWidth - 200);
-      const y = Math.random() * (window.innerHeight - 100);
-      return { x, y };
-    };
+  // スクランブル文字の設定
+  const scrambleChars = useMemo(() => "upperAndLowerCase", []);
 
-    const scrambleQuote = (quote: HTMLElement, text: string) => {
+  // ランダム位置の取得
+  const getRandomPos = useCallback(() => {
+    if (typeof window === "undefined") return { x: 0, y: 0 };
+    return getRandomPosition();
+  }, []);
+
+  // スクランブルアニメーションの設定
+  const createScrambleAnimation = useCallback(
+    (quote: HTMLElement, text: string) => {
       const tl = gsap.timeline({ repeat: -1, repeatDelay: 1 });
 
       tl.call(() => {
-        const { x, y } = getRandomPosition();
+        const { x, y } = getRandomPos();
         gsap.set(quote, { x, y });
       })
         .to(quote, {
           delay: Math.random() * 5,
           duration: 1,
           opacity: 1,
-          scrambleText: { text, chars: scrambleChars, revealDelay: 0.5, speed: 1 },
+          scrambleText: {
+            text,
+            chars: scrambleChars,
+            revealDelay: 0.5,
+            speed: 1,
+          },
           ease: "power2.out",
         })
-
         .to(quote, {
           delay: 0.5,
           duration: 1,
-          scrambleText: { text: "", chars: scrambleChars },
+          scrambleText: {
+            text: "",
+            chars: scrambleChars,
+          },
           opacity: 0,
           ease: "power2.in",
         });
-    };
+    },
+    [getRandomPos, scrambleChars]
+  );
 
-    quotes.forEach((quote) => {
+  useGSAP(() => {
+    if (!containerRef.current) return;
+
+    const quoteElements = gsap.utils.toArray<HTMLElement>(".quote");
+
+    // 各引用文にアニメーションを設定
+    quoteElements.forEach((quote) => {
       gsap.set(quote, {
         position: "absolute",
         opacity: 0,
         whiteSpace: "nowrap",
       });
 
-      scrambleQuote(quote, quote.textContent ?? "");
+      createScrambleAnimation(quote, quote.textContent ?? "");
     });
-  }, [containerRef]);
+  }, [containerRef, createScrambleAnimation]);
+
   return (
     <div className={cn("absolute top-0 left-0 inset-0 contain-paint text-xs font-semibold text-white/30", className)}>
       {quotes.map((quote, index) => (

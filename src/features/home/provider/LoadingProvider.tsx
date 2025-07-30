@@ -1,14 +1,36 @@
 "use client";
 
-import { createContext, useState } from "react";
+import { createContext, useState, useContext } from "react";
 
-export const LoadingContext = createContext<{ isLoading: boolean; setIsLoading: (isLoading: boolean) => void }>({
+interface LoadingContextType {
+  isLoading: boolean;
+  setIsLoading: (isLoading: boolean) => void;
+}
+
+const LoadingContext = createContext<LoadingContextType>({
   isLoading: true,
   setIsLoading: () => {},
 });
 
-export default function LoadingProvider({ children }: { children: React.ReactNode }) {
+/**
+ * ローディング状態を管理するプロバイダー
+ * 3Dモデルの読み込み状態を管理
+ */
+export function LoadingProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
-  return <LoadingContext value={{ isLoading, setIsLoading }}>{children}</LoadingContext>;
+  return <LoadingContext.Provider value={{ isLoading, setIsLoading }}>{children}</LoadingContext.Provider>;
 }
+
+/**
+ * ローディングコンテキストを使用するカスタムフック
+ */
+export function useLoading() {
+  const context = useContext(LoadingContext);
+  if (!context) {
+    throw new Error("useLoading must be used within a LoadingProvider");
+  }
+  return context;
+}
+
+export { LoadingContext };
