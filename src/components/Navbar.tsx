@@ -1,6 +1,6 @@
 "use client";
 
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { AlignRight } from "lucide-react";
 import { NAV_ITEMS } from "@/constants";
 import { cn } from "@/lib/utils";
@@ -46,19 +46,19 @@ function MobileNav() {
   return (
     <Sheet>
       <SheetTrigger className="md:hidden p-2 hover:bg-accent/10 rounded-md transition-colors">
-        <AlignRight className="h-5 w-5" />
+        <AlignRight className="h-5 w-5 cursor-pointer" />
         <span className="sr-only">メニューを開く</span>
       </SheetTrigger>
-      <SheetContent className="duration-75">
-        <SheetHeader>
+      <SheetContent className="duration-75" side="top">
+        <SheetHeader className="sr-only">
           <SheetTitle>メニュー</SheetTitle>
           <SheetDescription>ナビゲーションメニュー</SheetDescription>
         </SheetHeader>
-        <nav className="mt-6">
+        <nav className="my-10">
           <ul className="space-y-4">
             {NAV_ITEMS.map((item) => (
-              <NavLink key={item.href} href={item.href} className="block py-2 text-lg">
-                {item.label}
+              <NavLink key={item.href} href={item.href} className="text-right block p-2 px-20 text-2xl ">
+                <SheetClose>{item.label}</SheetClose>
               </NavLink>
             ))}
           </ul>

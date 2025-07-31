@@ -40,14 +40,20 @@ export default function Model() {
 
   // リサイズハンドラー
   const handleResize = useCallback((camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer, sizes: Sizes) => {
-    sizes.width = window.innerWidth;
-    sizes.height = window.innerHeight;
-    sizes.pixelRatio = Math.min(window.devicePixelRatio, 2);
+    const newWidth = window.innerWidth;
+    const newHeight = window.innerHeight;
 
-    camera.aspect = sizes.width / sizes.height;
-    camera.updateProjectionMatrix();
-    renderer.setSize(sizes.width, sizes.height);
-    renderer.setPixelRatio(sizes.pixelRatio);
+    // widthが変更された場合のみ処理を実行
+    if (newWidth !== sizes.width) {
+      sizes.width = newWidth;
+      sizes.height = newHeight;
+      sizes.pixelRatio = Math.min(window.devicePixelRatio, 2);
+
+      camera.aspect = sizes.width / sizes.height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(sizes.width, sizes.height);
+      renderer.setPixelRatio(sizes.pixelRatio);
+    }
   }, []);
 
   useEffect(() => {
@@ -161,10 +167,17 @@ export default function Model() {
 
     renderer.setAnimationLoop(animate);
 
+    window.addEventListener("load", () => {
+      window.scrollTo(0, 0);
+    });
+
     // クリーンアップ
     return () => {
       window.removeEventListener("resize", resizeHandler);
       window.removeEventListener("mousemove", mouseMoveHandler);
+      window.removeEventListener("load", () => {
+        window.scrollTo(0, 0);
+      });
       renderer.dispose();
     };
   }, [deviceType, modelConfig, handleMouseMove, handleResize, setIsLoading]);
@@ -172,7 +185,7 @@ export default function Model() {
   return (
     <>
       {isLoading && <Loader />}
-      <canvas className="w-full h-full absolute top-0 left-0 -z-10" />
+      <canvas className="w-full h-screen absolute top-0 left-0 -z-10" />
     </>
   );
 }

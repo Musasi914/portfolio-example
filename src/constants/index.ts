@@ -3,8 +3,8 @@ import { NavItem } from "@/types";
 // ナビゲーション項目
 export const NAV_ITEMS: NavItem[] = [
   { href: "#hero", label: "TOP" },
-  { href: "#marquee", label: "About" },
-  { href: "#contact", label: "Contact" },
+  { href: "#marquee", label: "ABOUT" },
+  { href: "#contact", label: "CONTACT" },
 ];
 
 // ホームセクションの引用文

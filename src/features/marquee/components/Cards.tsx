@@ -22,7 +22,7 @@ export function BentoGridDemo() {
           description={item.description}
           header={item.header}
           icon={item.icon}
-          className={cn(i === 3 || i === 6 ? "md:col-span-2" : "", "max-w-sm", "md:max-w-none")}
+          className={cn(i === 3 || i === 6 ? "md:col-span-2" : "", "max-w-sm md:max-w-none w-full")}
         />
       ))}
     </BentoGrid>
